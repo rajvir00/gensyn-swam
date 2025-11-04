@@ -1,1 +1,80 @@
-# gensyn-swam
+-------------Gensyn node setup-----------------
+
+
+sudo apt-get update && sudo apt-get upgrade -y
+
+sudo apt install screen curl iptables build-essential git wget lz4 jq make gcc nano automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev libleveldb-dev tar clang bsdmainutils ncdu unzip libleveldb-dev  -y
+
+sudo apt-get install python3 python3-pip python3-venv python3-dev -y
+
+sudo apt-get update
+
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo npm install -g yarn
+
+curl -o- -L https://yarnpkg.com/install.sh | bash
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+
+source ~/.bashrc
+
+node -v
+yarn -v
+npm -v
+python3 --version
+
+git clone https://github.com/gensyn-ai/rl-swarm/
+
+screen -S gensyn
+
+cd rl-swarm
+
+python3 -m venv .venv
+source .venv/bin/activate
+
+git switch main
+git reset --hard
+git clean -fd
+git pull origin main
+
+pip install --force-reinstall trl==0.19.1
+pip install transformers==4.51.3
+
+
+
+---RUN NODE-------------
+if running from old swarm file first transfer swarm.pen to (vps) rl-swarm folder THEN RUN below command
+
+./run_rl_swarm.sh
+
+------Now open same vps in new tab--this step is to tunnel server access------
+
+sudo npm install -g localtunnel
+
+lt --port 3000
+
+-----------------------------------------------------------------------------------------------
+--------To check node running------------
+
+screen -d -r gensyn
+
+-----If node stopped with red line-------
+
+deactivate 
+rm -rf .venv
+
+python3 -m venv .venv
+source .venv/bin/activate
+
+git switch main
+git reset --hard
+git clean -fd
+git pull origin main
+
+
+./run_rl_swarm.sh
+
+
+
+
